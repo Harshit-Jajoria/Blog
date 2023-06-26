@@ -10,6 +10,7 @@ import {
   ListItemText,
   Pagination,
   Grid,
+  Button,
 } from '@mui/material';
 import Footer from './Footer';
 import Navbar from './Navbar';
@@ -18,6 +19,18 @@ function BlogList() {
   const [blogPosts, setBlogPosts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage] = useState(10);
+  const [favorite, setFavorite] = useState(() => {
+    const storedFavorites = localStorage.getItem('favorites');
+    return storedFavorites ? JSON.parse(storedFavorites) : [];
+  });
+  const addToFavorites = (post) => {
+    const updatedFavorites = [...favorite];
+    if (!updatedFavorites.some((item) => item.id === post.id)) {
+      updatedFavorites.push(post);
+      setFavorite(updatedFavorites);
+      localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
+    }
+  };
 
   useEffect(() => {
     axios
@@ -63,6 +76,13 @@ function BlogList() {
                     <ListItemText primary={post.title} secondary={post.body} />
                   </Link>
                 </CardContent>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => addToFavorites(post)}
+                >
+                  Add to Favorites
+                </Button>
               </Card>
             </Grid>
           ))}

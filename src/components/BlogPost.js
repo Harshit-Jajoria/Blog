@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import {
+  Button,
   Card,
   CardContent,
   CardMedia,
@@ -19,6 +20,7 @@ function BlogPost() {
   const [author, setAuthor] = useState(null);
   const { id } = useParams();
 const postId = id;
+
   useEffect(() => {
     axios
       .get(`https://jsonplaceholder.typicode.com/posts/${postId}`)
@@ -81,6 +83,7 @@ const postId = id;
               {post.body}
             </Typography>
           </CardContent>
+      
         </Card>
         <h3>Comments</h3>
         <List>
