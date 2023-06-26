@@ -8,6 +8,8 @@ import {
   CardMedia,
   List,
   ListItem,
+  ListItemAvatar,
+  Avatar,
   ListItemText,
   Typography,
 } from '@mui/material';
@@ -19,13 +21,14 @@ function BlogPost() {
   const [comments, setComments] = useState([]);
   const [author, setAuthor] = useState(null);
   const { id } = useParams();
-const postId = id;
+  const postId = id;
 
   useEffect(() => {
     axios
       .get(`https://jsonplaceholder.typicode.com/posts/${postId}`)
       .then((response) => {
         setPost(response.data);
+        // console.log('Post->', response.data);
       })
       .catch((error) => {
         console.error('Error fetching blog post:', error);
@@ -35,6 +38,7 @@ const postId = id;
       .get(`https://jsonplaceholder.typicode.com/comments?postId=${postId}`)
       .then((response) => {
         setComments(response.data);
+        // console.log('Comments->', response.data);
       })
       .catch((error) => {
         console.error('Error fetching comments:', error);
@@ -47,6 +51,7 @@ const postId = id;
         .get(`https://jsonplaceholder.typicode.com/users?id=${post.userId}`)
         .then((response) => {
           setAuthor(response.data[0]);
+          // console.log('Author->', response.data);
         })
         .catch((error) => {
           console.error('Error fetching author:', error);
@@ -63,13 +68,12 @@ const postId = id;
       style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}
     >
       <Navbar />
-      <div style={{ flexGrow: 1 }}>
+      <div style={{ flexGrow: 1, padding: '20px' }}>
         <Card>
           <CardMedia
             component="img"
             height="200"
             image="https://firebasestorage.googleapis.com/v0/b/social-media-d16de.appspot.com/o/download.jpeg?alt=media&token=1b96ae4c-23d0-4fab-8984-ba859ed4b26f"
-
             alt="Blog Post"
           />
           <CardContent>
@@ -79,17 +83,38 @@ const postId = id;
             <Typography color="textSecondary" gutterBottom>
               {author.name} - {author.email}
             </Typography>
-            <Typography variant="body2" component="p">
-              {post.body}
-            </Typography>
+            {post.body.split('\n\n').map((paragraph, index) => (
+              <Typography variant="body2" component="p" key={index}>
+                {paragraph}
+              </Typography>
+            ))}
           </CardContent>
-      
         </Card>
-        <h3>Comments</h3>
+        <h3 style={{ marginTop: '20px' }}>Comments-{comments.length}</h3>
         <List>
           {comments.map((comment) => (
             <ListItem key={comment.id}>
-              <ListItemText primary={comment.name} secondary={comment.body} />
+              <ListItemAvatar>
+                <Avatar alt={comment.name} src={comment.email} />
+              </ListItemAvatar>
+              <ListItemText
+                primary={
+                  <Typography variant="h5" component="div" mb={1}>
+                    <span style={{ fontWeight: 'bold' }}>
+                     
+                      {comment.name.split(' ').slice(0, 2).join(' ')}
+                    </span>
+                  </Typography>
+                }
+                secondary={
+                  <Typography variant="body2" component="div" >
+                    <span style={{ fontWeight: 'bold' }}>{String(comment.email)}</span>
+                    <br />
+                    {String(comment.body)}
+                  </Typography>
+                }
+                primaryTypographyProps={{ variant: 'subtitle1' }}
+              />
             </ListItem>
           ))}
         </List>
