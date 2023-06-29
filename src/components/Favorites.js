@@ -26,9 +26,8 @@ function Favorites() {
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Navbar />
       <div>
-        <Typography variant="h5" component="h2">
-          Favorites
-        </Typography>
+      <h1 style={{ textAlign: 'center' }}>Favorites</h1>
+
         {favoritePosts.length > 0 ? (
           <List>
             <Grid container spacing={2} justifyContent="center">
