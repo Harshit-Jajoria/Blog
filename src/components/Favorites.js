@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Typography, Card, CardContent, IconButton, List, ListItem, ListItemText, CardMedia, Grid } from '@mui/material';
+import { Typography, Card, CardContent, IconButton, List, ListItem, ListItemText, CardMedia, Grid, Button } from '@mui/material';
 import { Delete } from '@mui/icons-material';
 import Navbar from './Navbar';
 import Footer from './Footer';
@@ -14,6 +14,7 @@ function Favorites() {
       setFavoritePosts(JSON.parse(storedFavorites));
     }
   }, []);
+  
 
   const handleDelete = (postId) => {
     const updatedFavorites = favoritePosts.filter((post) => post.id !== postId);
@@ -55,7 +56,9 @@ function Favorites() {
                     <ListItemText primary={post.title} secondary={post.body} />
                   </Link>
                 </CardContent>
-                
+                <Button variant="contained" color="primary" onClick={() => handleDelete(post.id)}>
+                    Remove from Favorites
+                  </Button>
               </Card>
             </Grid>
             ))}

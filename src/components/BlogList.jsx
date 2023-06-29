@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import '../index.css';
 import {
   Card,
   CardContent,
@@ -23,6 +24,8 @@ function BlogList() {
     const storedFavorites = localStorage.getItem('favorites');
     return storedFavorites ? JSON.parse(storedFavorites) : [];
   });
+  const [loading, setLoading] = useState(true);
+
   const addToFavorites = (post) => {
     const updatedFavorites = [...favorite];
     if (!updatedFavorites.some((item) => item.id === post.id)) {
@@ -37,9 +40,11 @@ function BlogList() {
       .get('https://jsonplaceholder.typicode.com/posts')
       .then((response) => {
         setBlogPosts(response.data);
+        setLoading(false);
       })
       .catch((error) => {
         console.error('Error fetching blog posts:', error);
+        setLoading(false);
       });
   }, []);
 
@@ -52,40 +57,49 @@ function BlogList() {
   };
 
   return (
-    <div
-      style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}
-    >
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Navbar />
       <div style={{ flexGrow: 1 }}>
         <h1 style={{ textAlign: 'center' }}>Blog Posts</h1>
         <Grid container spacing={2} justifyContent="center">
-          {currentPosts.map((post) => (
-            <Grid item xs={12} sm={6} md={4} key={post.id}>
-              <Card>
-                <CardMedia
-                  component="img"
-                  height="200"
-                  image="https://firebasestorage.googleapis.com/v0/b/social-media-d16de.appspot.com/o/download.jpeg?alt=media&token=1b96ae4c-23d0-4fab-8984-ba859ed4b26f"
-                  alt="Blog Post"
-                />
-                <CardContent>
-                  <Link
-                    to={`/post/${post.id}`}
-                    style={{ textDecoration: 'none' }}
-                  >
-                    <ListItemText primary={post.title} secondary={post.body} />
-                  </Link>
-                </CardContent>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => addToFavorites(post)}
-                >
-                  Add to Favorites
-                </Button>
-              </Card>
-            </Grid>
-          ))}
+          {loading ? (
+            // Render shimmer effect when loading
+            <>
+              {[...Array(postsPerPage)].map((_, index) => (
+                <Grid item xs={12} sm={6} md={4} key={index}>
+                  <div className="shimmer">
+                    <div className="shimmer-image"></div>
+                    <div className="shimmer-content">
+                      <div className="shimmer-text"></div>
+                      <div className="shimmer-text"></div>
+                    </div>
+                  </div>
+                </Grid>
+              ))}
+            </>
+          ) : (
+            // Render actual blog posts when not loading
+            currentPosts.map((post) => (
+              <Grid item xs={12} sm={6} md={4} key={post.id}>
+                <Card>
+                  <CardMedia
+                    component="img"
+                    height="200"
+                    image="https://firebasestorage.googleapis.com/v0/b/social-media-d16de.appspot.com/o/download.jpeg?alt=media&token=1b96ae4c-23d0-4fab-8984-ba859ed4b26f"
+                    alt="Blog Post"
+                  />
+                  <CardContent>
+                    <Link to={`/post/${post.id}`} style={{ textDecoration: 'none' }}>
+                      <ListItemText primary={post.title} secondary={post.body} />
+                    </Link>
+                  </CardContent>
+                  <Button variant="contained" color="primary" onClick={() => addToFavorites(post)}>
+                    Add to Favorites
+                  </Button>
+                </Card>
+              </Grid>
+            ))
+          )}
         </Grid>
       </div>
       <Pagination
